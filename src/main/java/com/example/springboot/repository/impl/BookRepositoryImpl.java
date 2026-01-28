@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class BookRepositoryImpl implements BookRepository {
@@ -14,6 +15,7 @@ public class BookRepositoryImpl implements BookRepository {
     private EntityManager entityManager;
 
     @Override
+    @Transactional
     public Book save(Book book) {
         entityManager.persist(book);
         return book;
