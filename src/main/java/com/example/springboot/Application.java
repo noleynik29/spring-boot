@@ -2,11 +2,11 @@ package com.example.springboot;
 
 import com.example.springboot.entity.Book;
 import com.example.springboot.service.BookService;
+import java.math.BigDecimal;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import java.math.BigDecimal;
 
 @SpringBootApplication
 public class Application {
