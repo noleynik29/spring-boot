@@ -1,6 +1,7 @@
 package com.example.springboot.controller;
 
 import com.example.springboot.dto.BookDto;
+import com.example.springboot.dto.BookSearchParametersDto;
 import com.example.springboot.dto.CreateBookRequestDto;
 import com.example.springboot.service.BookService;
 import java.util.List;
@@ -53,4 +54,10 @@ public class BookController {
     public void delete(@PathVariable Long id) {
         bookService.delete(id);
     }
+
+    @GetMapping("/search")
+    public List<BookDto> searchBooks(BookSearchParametersDto searchParameters) {
+        return bookService.searchBooks(searchParameters);
+    }
+
 }

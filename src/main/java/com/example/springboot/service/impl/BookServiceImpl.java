@@ -1,6 +1,7 @@
 package com.example.springboot.service.impl;
 
 import com.example.springboot.dto.BookDto;
+import com.example.springboot.dto.BookSearchParametersDto;
 import com.example.springboot.dto.CreateBookRequestDto;
 import com.example.springboot.entity.Book;
 import com.example.springboot.exception.EntityNotFoundException;
@@ -57,6 +58,17 @@ public class BookServiceImpl implements BookService {
                         new EntityNotFoundException("Book not found by id: " + id)
                 );
         bookRepository.delete(book);
+    }
+
+    @Override
+    public List<BookDto> searchBooks(BookSearchParametersDto params) {
+        return bookRepository.search(
+                        params.title(),
+                        params.author(),
+                        params.isbn()
+                ).stream()
+                .map(bookMapper::toBookDto)
+                .toList();
     }
 }
 
