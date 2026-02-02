@@ -12,7 +12,7 @@ public interface BookRepository extends JpaRepository<Book,Long> {
         WHERE (:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%')))
           AND (:author IS NULL OR LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%')))
           AND (:isbn IS NULL OR b.isbn = :isbn)
-    """)
+            """)
     List<Book> search(
             @Param("title") String title,
             @Param("author") String author,
