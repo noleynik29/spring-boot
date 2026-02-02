@@ -10,6 +10,8 @@ import jakarta.persistence.UniqueConstraint;
 import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @Setter
@@ -17,6 +19,8 @@ import lombok.Setter;
 @Table(name = "books", uniqueConstraints = {
         @UniqueConstraint(columnNames = "isbn")
 })
+@SQLDelete(sql = "UPDATE books SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 public class Book {
 
     @Id
