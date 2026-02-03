@@ -9,7 +9,6 @@ import com.example.springboot.mapper.BookMapper;
 import com.example.springboot.repository.book.BookRepository;
 import com.example.springboot.repository.book.BookSpecificationBuilder;
 import com.example.springboot.service.BookService;
-
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;

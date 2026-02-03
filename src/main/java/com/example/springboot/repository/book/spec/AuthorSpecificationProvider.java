@@ -2,9 +2,9 @@ package com.example.springboot.repository.book.spec;
 
 import com.example.springboot.entity.Book;
 import com.example.springboot.repository.SpecificationProvider;
+import java.util.Arrays;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import java.util.Arrays;
 
 @Component
 public class AuthorSpecificationProvider implements SpecificationProvider<Book> {
@@ -20,6 +20,6 @@ public class AuthorSpecificationProvider implements SpecificationProvider<Book> 
                         .stream(params)
                         .toArray()
                 )
-        );
+            );
     }
 }
