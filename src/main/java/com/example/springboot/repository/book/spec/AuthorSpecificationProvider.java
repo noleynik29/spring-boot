@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthorSpecificationProvider implements SpecificationProvider<Book> {
-    final String key = "author";
+    public static final String key = "author";
 
     @Override
     public String getKey() {
