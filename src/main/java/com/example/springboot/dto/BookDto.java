@@ -1,9 +1,9 @@
 package com.example.springboot.dto;
 
 import java.math.BigDecimal;
-import lombok.Data;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 @Data
 public class BookDto {
