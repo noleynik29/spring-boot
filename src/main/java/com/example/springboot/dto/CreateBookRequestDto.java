@@ -1,25 +1,26 @@
 package com.example.springboot.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
 public class CreateBookRequestDto {
-    @NotNull
+    @NotNull(message = "This field cannot be null")
     private Long id;
-    @NotNull
+    @NotBlank(message = "This field cannot be blank")
     private String title;
-    @NotNull
+    @NotBlank(message = "This field cannot be blank")
     private String author;
-    @NotNull
+    @NotBlank(message = "This field cannot be blank")
     private String isbn;
-    @NotNull
+    @NotNull(message = "This field cannot be null")
     @Min(0)
     private BigDecimal price;
-    @NotNull
+    @NotBlank(message = "This field cannot be blank")
     private String description;
-    @NotNull
+    @NotBlank(message = "This field cannot be blank")
     private String coverImage;
 }
