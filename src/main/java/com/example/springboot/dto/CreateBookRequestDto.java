@@ -8,13 +8,13 @@ import lombok.Data;
 
 @Data
 public class CreateBookRequestDto {
-    @NotBlank(message = "This field cannot be blank")
+    @NotBlank(message = "Title cannot be blank")
     private String title;
-    @NotBlank(message = "This field cannot be blank")
+    @NotBlank(message = "Author cannot be blank")
     private String author;
-    @NotBlank(message = "This field cannot be blank")
+    @NotBlank(message = "ISBN cannot be blank")
     private String isbn;
-    @NotNull(message = "This field cannot be null")
+    @NotNull(message = "Price cannot be null")
     @Positive
     private BigDecimal price;
     private String description;
