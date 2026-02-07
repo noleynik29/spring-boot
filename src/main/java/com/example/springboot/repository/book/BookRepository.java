@@ -1,6 +1,5 @@
 package com.example.springboot.repository.book;
 
-import com.example.springboot.dto.BookDto;
 import com.example.springboot.entity.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
