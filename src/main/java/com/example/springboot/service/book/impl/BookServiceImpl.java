@@ -1,14 +1,14 @@
-package com.example.springboot.service.impl;
+package com.example.springboot.service.book.impl;
 
-import com.example.springboot.dto.BookDto;
-import com.example.springboot.dto.BookSearchParametersDto;
-import com.example.springboot.dto.CreateBookRequestDto;
+import com.example.springboot.dto.book.BookDto;
+import com.example.springboot.dto.book.BookSearchParametersDto;
+import com.example.springboot.dto.book.CreateBookRequestDto;
 import com.example.springboot.entity.Book;
 import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.mapper.BookMapper;
 import com.example.springboot.repository.book.BookRepository;
 import com.example.springboot.repository.book.BookSpecificationBuilder;
-import com.example.springboot.service.BookService;
+import com.example.springboot.service.book.BookService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
