@@ -1,7 +1,7 @@
 package com.example.springboot.service.user.impl;
 
 import com.example.springboot.entity.User;
-import com.example.springboot.repository.UserRepository;
+import com.example.springboot.repository.user.UserRepository;
 import com.example.springboot.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
