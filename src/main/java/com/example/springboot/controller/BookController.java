@@ -1,9 +1,9 @@
 package com.example.springboot.controller;
 
-import com.example.springboot.dto.BookDto;
-import com.example.springboot.dto.BookSearchParametersDto;
-import com.example.springboot.dto.CreateBookRequestDto;
-import com.example.springboot.service.BookService;
+import com.example.springboot.dto.book.BookDto;
+import com.example.springboot.dto.book.BookSearchParametersDto;
+import com.example.springboot.dto.book.CreateBookRequestDto;
+import com.example.springboot.service.book.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

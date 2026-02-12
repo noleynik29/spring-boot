@@ -1,6 +1,6 @@
 package com.example.springboot.repository.book;
 
-import com.example.springboot.dto.BookSearchParametersDto;
+import com.example.springboot.dto.book.BookSearchParametersDto;
 import com.example.springboot.entity.Book;
 import com.example.springboot.repository.SpecificationBuilder;
 import com.example.springboot.repository.SpecificationProviderManager;
