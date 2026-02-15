@@ -26,7 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "users", uniqueConstraints = {
     @UniqueConstraint(columnNames = "email")
 })
-@SQLDelete(sql = "UPDATE books SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE users SET is_deleted = true WHERE id = ?")
 @SQLRestriction("is_deleted = false")
 public class User implements UserDetails {
     @Id
@@ -46,6 +46,9 @@ public class User implements UserDetails {
     private String lastName;
 
     private String shippingAddress;
+
+    @Column(nullable = false)
+    private boolean isDeleted = false;
 
     @ManyToMany
     @JoinTable(
@@ -77,6 +80,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !isDeleted;
     }
 }

@@ -14,7 +14,7 @@ databaseChangeLog:
                     primaryKey: true
               - column:
                   name: name
-                  type: ENUM('role_user','role_admin')
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false
                     unique: true
