@@ -1,5 +1,7 @@
 package com.example.springboot.controller;
 
+import com.example.springboot.dto.user.UserLoginRequestDto;
+import com.example.springboot.dto.user.UserLoginResponseDto;
 import com.example.springboot.dto.user.UserRegistrationRequestDto;
 import com.example.springboot.dto.user.UserResponseDto;
 import com.example.springboot.service.auth.AuthenticationService;
@@ -21,6 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+
+    @PostMapping("/login")
+    @Operation(summary = "Authenticate user and return JWT token")
+    public UserLoginResponseDto login(
+            @Valid @RequestBody UserLoginRequestDto request
+    ) {
+        return authenticationService.login(request);
+    }
 
     @Operation(summary = "Register a new user")
     @PostMapping("/registration")
