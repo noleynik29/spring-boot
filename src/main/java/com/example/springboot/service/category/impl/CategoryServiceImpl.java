@@ -72,13 +72,4 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(bookMapper::toDtoWithoutCategories)
                 .toList();
     }
-
-    @Override
-    public Set<Category> getCategoriesByIds(Set<Long> categoryIds) {
-        return categoryIds.stream()
-                .map(id -> categoryRepository.findById(id)
-                        .orElseThrow(() ->
-                                new EntityNotFoundException("Category not found: " + id)))
-                .collect(Collectors.toSet());
-    }
 }
