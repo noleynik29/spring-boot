@@ -12,8 +12,6 @@ import com.example.springboot.repository.category.CategoryRepository;
 import com.example.springboot.service.category.CategoryService;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
