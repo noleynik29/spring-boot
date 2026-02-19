@@ -10,6 +10,8 @@ import com.example.springboot.repository.book.BookRepository;
 import com.example.springboot.repository.book.BookSpecificationBuilder;
 import com.example.springboot.service.book.BookService;
 import java.util.List;
+
+import com.example.springboot.service.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +25,14 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
+    private final CategoryService categoryService;
 
     @Override
     public BookDto save(CreateBookRequestDto bookDto) {
         Book book = bookMapper.toEntity(bookDto);
+        book.setCategories(
+                categoryService.getCategoriesByIds(bookDto.getCategoriesId())
+        );
         return bookMapper.toDto(bookRepository.save(book));
     }
 
@@ -52,6 +58,9 @@ public class BookServiceImpl implements BookService {
                         new EntityNotFoundException("Book not found by id: " + id)
                 );
         bookMapper.updateBookFromDto(requestDto, book);
+        book.setCategories(
+                categoryService.getCategoriesByIds(requestDto.getCategoriesId())
+        );
         return bookMapper.toDto(book);
     }
 

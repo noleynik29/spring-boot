@@ -4,6 +4,8 @@ import com.example.springboot.dto.book.BookDtoWithoutCategoryIds;
 import com.example.springboot.dto.category.CategoryDto;
 import com.example.springboot.dto.category.CategoryRequestDto;
 import java.util.List;
+import java.util.Set;
+import com.example.springboot.entity.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,4 +21,6 @@ public interface CategoryService {
     void deleteById(Long id);
 
     List<BookDtoWithoutCategoryIds> getBooksByCategoryId(Long id);
+
+    Set<Category> getCategoriesByIds(Set<Long> categoryIds);
 }

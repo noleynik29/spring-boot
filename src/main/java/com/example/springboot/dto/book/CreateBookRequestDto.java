@@ -1,6 +1,5 @@
 package com.example.springboot.dto.book;
 
-import com.example.springboot.entity.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -24,5 +23,5 @@ public class CreateBookRequestDto {
     private String description;
     private String coverImage;
     @NotEmpty
-    private Set<Category> categories = new HashSet<>();
+    private Set<Long> categoriesId = new HashSet<>();
 }
