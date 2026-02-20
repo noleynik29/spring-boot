@@ -11,9 +11,9 @@ import com.example.springboot.repository.book.BookRepository;
 import com.example.springboot.repository.category.CategoryRepository;
 import com.example.springboot.service.category.CategoryService;
 import jakarta.transaction.Transactional;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -75,10 +75,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Set<Category> getCategoriesByIds(Set<Long> categoryIds) {
-        return categoryIds.stream()
-                .map(id -> categoryRepository.findById(id)
-                        .orElseThrow(() ->
-                                new EntityNotFoundException("Category not found: " + id)))
-                .collect(Collectors.toSet());
+        Set<Category> categories = new HashSet<>(categoryRepository.findAllById(categoryIds));
+
+        if (categories.size() != categoryIds.size()) {
+            throw new EntityNotFoundException("One or more categories not found");
+        }
+
+        return categories;
     }
 }

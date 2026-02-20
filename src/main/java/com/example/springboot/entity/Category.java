@@ -35,9 +35,4 @@ public class Category {
 
     @Column(nullable = false)
     private boolean isDeleted;
-
-    @ManyToMany(mappedBy = "categories")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<Book> books = new HashSet<>();
 }
