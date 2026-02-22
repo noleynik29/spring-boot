@@ -1,4 +1,4 @@
-package com.example.springboot.repository.shopping_cart;
+package com.example.springboot.repository.cart;
 
 import com.example.springboot.entity.ShoppingCart;
 import java.util.Optional;

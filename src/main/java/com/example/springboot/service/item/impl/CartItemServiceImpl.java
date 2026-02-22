@@ -1,4 +1,4 @@
-package com.example.springboot.service.cart_item.impl;
+package com.example.springboot.service.item.impl;
 
 import com.example.springboot.dto.cart.AddToCartRequestDto;
 import com.example.springboot.dto.cart.CartItemDto;
@@ -7,8 +7,8 @@ import com.example.springboot.entity.CartItem;
 import com.example.springboot.entity.ShoppingCart;
 import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.mapper.ShoppingCartMapper;
-import com.example.springboot.repository.cartItem.CartItemRepository;
-import com.example.springboot.service.cart_item.CartItemService;
+import com.example.springboot.repository.item.CartItemRepository;
+import com.example.springboot.service.item.CartItemService;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
