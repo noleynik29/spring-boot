@@ -9,6 +9,7 @@ import com.example.springboot.mapper.BookMapper;
 import com.example.springboot.repository.book.BookRepository;
 import com.example.springboot.repository.book.BookSpecificationBuilder;
 import com.example.springboot.service.book.BookService;
+import com.example.springboot.service.category.CategoryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,17 +24,21 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
+    private final CategoryService categoryService;
 
     @Override
     public BookDto save(CreateBookRequestDto bookDto) {
-        Book book = bookMapper.toBook(bookDto);
-        return bookMapper.toBookDto(bookRepository.save(book));
+        Book book = bookMapper.toEntity(bookDto);
+        book.setCategories(
+                categoryService.getCategoriesByIds(bookDto.getCategoriesId())
+        );
+        return bookMapper.toDto(bookRepository.save(book));
     }
 
     @Override
     public Page<BookDto> findAll(Pageable pageable) {
         return (Page<BookDto>) bookRepository.findAll(pageable).stream()
-                .map(bookMapper::toBookDto)
+                .map(bookMapper::toDto)
                 .toList();
     }
 
@@ -42,7 +47,7 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
                 "Can't find Book with id:" + id)
         );
-        return bookMapper.toBookDto(book);
+        return bookMapper.toDto(book);
     }
 
     @Override
@@ -52,7 +57,10 @@ public class BookServiceImpl implements BookService {
                         new EntityNotFoundException("Book not found by id: " + id)
                 );
         bookMapper.updateBookFromDto(requestDto, book);
-        return bookMapper.toBookDto(book);
+        book.setCategories(
+                categoryService.getCategoriesByIds(requestDto.getCategoriesId())
+        );
+        return bookMapper.toDto(book);
     }
 
     @Override
@@ -69,7 +77,7 @@ public class BookServiceImpl implements BookService {
         Specification<Book> specification = bookSpecificationBuilder.build(params);
         return bookRepository.findAll(specification)
                 .stream()
-                .map(bookMapper::toBookDto)
+                .map(bookMapper::toDto)
                 .toList();
     }
 }

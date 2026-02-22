@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-categories
+      author: noleynik29
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Fiction
+              - column:
+                  name: description
+                  value: Fiction books
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Science
+              - column:
+                  name: description
+                  value: Science books
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Fantasy
+              - column:
+                  name: description
+                  value: Fantasy books
