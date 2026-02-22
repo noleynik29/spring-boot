@@ -1,4 +1,4 @@
-package com.example.springboot.service.cartItem;
+package com.example.springboot.service.cart_item;
 
 import com.example.springboot.dto.cart.AddToCartRequestDto;
 import com.example.springboot.dto.cart.CartItemDto;
