@@ -1,0 +1,56 @@
+package com.example.springboot.controller;
+
+import com.example.springboot.dto.cart.AddToCartRequestDto;
+import com.example.springboot.dto.cart.ShoppingCartDto;
+import com.example.springboot.dto.cart.UpdateCartItemRequestDto;
+import com.example.springboot.service.cart.ShoppingCartService;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+
+@RestController
+@RequestMapping("/cart")
+@RequiredArgsConstructor
+public class ShoppingCartController {
+
+    private final ShoppingCartService cartService;
+
+    @Operation(summary = "Get current user's shopping cart")
+    @GetMapping
+    @PreAuthorize("hasRole('USER')")
+    public ShoppingCartDto getCart(Principal principal) {
+        return cartService.getCartByUserEmail(principal.getName());
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
+    public ShoppingCartDto addBookToCart(
+            @RequestBody @Valid AddToCartRequestDto dto,
+            Principal principal
+    ) {
+        cartService.addBookToCartByUserEmail(principal.getName(), dto);
+        return cartService.getCartByUserEmail(principal.getName());
+    }
+
+    @PutMapping("/items/{cartItemId}")
+    @PreAuthorize("hasRole('USER')")
+    public ShoppingCartDto updateCartItem(
+            @PathVariable Long cartItemId,
+            @RequestBody @Valid UpdateCartItemRequestDto dto,
+            Principal principal
+    ) {
+        cartService.updateCartItem(cartItemId, dto);
+        return cartService.getCartByUserEmail(principal.getName());
+    }
+
+    @Operation(summary = "Remove book from shopping cart")
+    @DeleteMapping("/items/{cartItemId}")
+    @PreAuthorize("hasRole('USER')")
+    public void removeCartItem(@PathVariable Long cartItemId) {
+        cartService.removeCartItem(cartItemId);
+    }
+}

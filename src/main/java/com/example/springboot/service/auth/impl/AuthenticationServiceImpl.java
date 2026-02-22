@@ -9,6 +9,7 @@ import com.example.springboot.exception.RegistrationException;
 import com.example.springboot.mapper.UserMapper;
 import com.example.springboot.repository.user.UserRepository;
 import com.example.springboot.service.auth.AuthenticationService;
+import com.example.springboot.service.cart.ShoppingCartService;
 import com.example.springboot.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +26,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserMapper userMapper;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RegistrationException("Email " + request.getEmail() + " already exists");
         }
-        User user = userMapper.toUser(request);
+        User user = userMapper.toEntity(request);
+        shoppingCartService.createCartForUser(user);
         return userMapper.toDto(userRepository.save(user));
     }
 
