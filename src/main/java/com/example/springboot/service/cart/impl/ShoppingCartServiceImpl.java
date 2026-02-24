@@ -3,14 +3,17 @@ package com.example.springboot.service.cart.impl;
 import com.example.springboot.dto.cart.AddToCartRequestDto;
 import com.example.springboot.dto.cart.ShoppingCartDto;
 import com.example.springboot.dto.cart.UpdateCartItemRequestDto;
+import com.example.springboot.entity.CartItem;
 import com.example.springboot.entity.ShoppingCart;
 import com.example.springboot.entity.User;
 import com.example.springboot.exception.EntityNotFoundException;
+import com.example.springboot.mapper.CartItemMapper;
 import com.example.springboot.mapper.ShoppingCartMapper;
 import com.example.springboot.repository.cart.ShoppingCartRepository;
+import com.example.springboot.repository.item.CartItemRepository;
 import com.example.springboot.service.cart.ShoppingCartService;
-import com.example.springboot.service.item.CartItemService;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +22,9 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartRepository cartRepository;
-    private final CartItemService cartItemService;
+    private final CartItemRepository cartItemRepository;
     private final ShoppingCartMapper cartMapper;
+    private final CartItemMapper cartItemMapper;
 
     @Override
     public ShoppingCartDto getCartByUserEmail(String email) {
@@ -30,7 +34,26 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCartDto addBookToCartByUserEmail(String email, AddToCartRequestDto dto) {
         ShoppingCart cart = findCartByUserEmail(email);
-        cartItemService.addOrUpdateCartItem(cart, dto);
+        Optional<CartItem> existingItem = cart.getCartItems().stream()
+                .filter(item -> item.getBook().getId().equals(dto.getBookId()))
+                .findFirst();
+
+        CartItem cartItem;
+
+        if (existingItem.isPresent()) {
+            cartItem = existingItem.get();
+            cartItem.setQuantity(cartItem.getQuantity() + dto.getQuantity());
+        } else {
+            cartItem = new CartItem();
+            cartItem.setShoppingCart(cart);
+
+            cartItemMapper.updateCartItemFromDto(dto, cartItem);
+
+            cart.getCartItems().add(cartItem);
+        }
+
+        cartItemRepository.save(cartItem);
+        cartItemMapper.toDto(cartItem);
         return cartMapper.toDto(cart);
     }
 
@@ -42,14 +65,20 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     ) {
         ShoppingCart cart = findCartByUserEmail(email);
 
-        cartItemService.updateCartItem(cartItemId, dto);
+        CartItem item = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "CartItem not found with id " + cartItemId
+                ));
+
+        item.setQuantity(dto.getQuantity());
+        cartItemMapper.toDto(item);
 
         return cartMapper.toDto(cart);
     }
 
     @Override
     public void removeCartItem(Long cartItemId) {
-        cartItemService.removeCartItem(cartItemId);
+        cartItemRepository.deleteById(cartItemId);
     }
 
     @Override

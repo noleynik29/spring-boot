@@ -8,10 +8,10 @@ import com.example.springboot.entity.Role;
 import com.example.springboot.entity.User;
 import com.example.springboot.exception.RegistrationException;
 import com.example.springboot.mapper.UserMapper;
+import com.example.springboot.repository.role.RoleRepository;
 import com.example.springboot.repository.user.UserRepository;
 import com.example.springboot.service.auth.AuthenticationService;
 import com.example.springboot.service.cart.ShoppingCartService;
-import com.example.springboot.service.role.RoleService;
 import com.example.springboot.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import java.util.Set;
@@ -31,7 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final RoleService roleService;
+    private final RoleRepository roleRepository;
     private final ShoppingCartService shoppingCartService;
 
     @Override
@@ -41,7 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        Role role = roleService.findByName(Role.RoleName.USER);
+        Role role = roleRepository.findByRole(Role.RoleName.USER);
         user.setRoles(Set.of(role));
         shoppingCartService.createCartForUser(user);
         return userMapper.toDto(userRepository.save(user));

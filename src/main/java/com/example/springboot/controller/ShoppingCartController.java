@@ -5,6 +5,7 @@ import com.example.springboot.dto.cart.ShoppingCartDto;
 import com.example.springboot.dto.cart.UpdateCartItemRequestDto;
 import com.example.springboot.service.cart.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +22,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/cart")
 @RequiredArgsConstructor
+@Tag(name = "ShoppingCart")
 public class ShoppingCartController {
     private final ShoppingCartService cartService;
 
-    @Operation(summary = "Get current user's shopping cart")
+    @Operation(summary = "Get current user's shopping cart",
+            description = "Get current user's shopping cart")
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public ShoppingCartDto getCart(Principal principal) {
         return cartService.getCartByUserEmail(principal.getName());
     }
 
+    @Operation(summary = "Add book to shopping cart",
+            description = "Add book to shopping cart")
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ShoppingCartDto addBookToCart(
@@ -40,6 +45,8 @@ public class ShoppingCartController {
         return cartService.addBookToCartByUserEmail(principal.getName(), dto);
     }
 
+    @Operation(summary = "Update cart item in shopping cart",
+            description = "Update cart item in shopping cart")
     @PutMapping("/items/{cartItemId}")
     @PreAuthorize("hasRole('USER')")
     public ShoppingCartDto updateCartItem(
@@ -50,7 +57,8 @@ public class ShoppingCartController {
         return cartService.updateCartItem(principal.getName(), cartItemId, dto);
     }
 
-    @Operation(summary = "Remove book from shopping cart")
+    @Operation(summary = "Remove book from shopping cart",
+            description = "Remove book from shopping cart")
     @DeleteMapping("/items/{cartItemId}")
     @PreAuthorize("hasRole('USER')")
     public void removeCartItem(@PathVariable Long cartItemId) {
