@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Transactional
 public class ShoppingCartServiceImpl implements ShoppingCartService {
-
     private final ShoppingCartRepository cartRepository;
     private final CartItemService cartItemService;
     private final ShoppingCartMapper cartMapper;
@@ -30,14 +29,23 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public CartItemDto addBookToCartByUserEmail(String email, AddToCartRequestDto dto) {
+    public ShoppingCartDto addBookToCartByUserEmail(String email, AddToCartRequestDto dto) {
         ShoppingCart cart = findCartByUserEmail(email);
-        return cartItemService.addOrUpdateCartItem(cart, dto);
+        cartItemService.addOrUpdateCartItem(cart, dto);
+        return cartMapper.toDto(cart);
     }
 
     @Override
-    public CartItemDto updateCartItem(Long cartItemId, UpdateCartItemRequestDto dto) {
-        return cartItemService.updateCartItem(cartItemId, dto);
+    public ShoppingCartDto updateCartItem(
+            String email,
+            Long cartItemId,
+            UpdateCartItemRequestDto dto
+    ) {
+        ShoppingCart cart = findCartByUserEmail(email);
+
+        cartItemService.updateCartItem(cartItemId, dto);
+
+        return cartMapper.toDto(cart);
     }
 
     @Override

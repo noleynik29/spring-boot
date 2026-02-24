@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/cart")
 @RequiredArgsConstructor
 public class ShoppingCartController {
-
     private final ShoppingCartService cartService;
 
     @Operation(summary = "Get current user's shopping cart")
@@ -38,8 +37,7 @@ public class ShoppingCartController {
             @RequestBody @Valid AddToCartRequestDto dto,
             Principal principal
     ) {
-        cartService.addBookToCartByUserEmail(principal.getName(), dto);
-        return cartService.getCartByUserEmail(principal.getName());
+        return cartService.addBookToCartByUserEmail(principal.getName(), dto);
     }
 
     @PutMapping("/items/{cartItemId}")
@@ -49,8 +47,7 @@ public class ShoppingCartController {
             @RequestBody @Valid UpdateCartItemRequestDto dto,
             Principal principal
     ) {
-        cartService.updateCartItem(cartItemId, dto);
-        return cartService.getCartByUserEmail(principal.getName());
+        return cartService.updateCartItem(principal.getName(), cartItemId, dto);
     }
 
     @Operation(summary = "Remove book from shopping cart")
