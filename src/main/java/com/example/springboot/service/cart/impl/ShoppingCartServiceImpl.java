@@ -1,7 +1,6 @@
 package com.example.springboot.service.cart.impl;
 
 import com.example.springboot.dto.cart.AddToCartRequestDto;
-import com.example.springboot.dto.cart.CartItemDto;
 import com.example.springboot.dto.cart.ShoppingCartDto;
 import com.example.springboot.dto.cart.UpdateCartItemRequestDto;
 import com.example.springboot.entity.ShoppingCart;
