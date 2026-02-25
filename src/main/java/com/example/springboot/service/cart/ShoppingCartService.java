@@ -16,4 +16,6 @@ public interface ShoppingCartService {
     ShoppingCartDto getCartByUserEmail(String email);
 
     ShoppingCartDto addBookToCartByUserEmail(String email, AddToCartRequestDto dto);
+
+    void clearCart(ShoppingCart cart);
 }

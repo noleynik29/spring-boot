@@ -10,7 +10,7 @@ import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.mapper.CartItemMapper;
 import com.example.springboot.mapper.ShoppingCartMapper;
 import com.example.springboot.repository.cart.ShoppingCartRepository;
-import com.example.springboot.repository.item.CartItemRepository;
+import com.example.springboot.repository.cart.CartItemRepository;
 import com.example.springboot.service.cart.ShoppingCartService;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
@@ -93,5 +93,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Cart not found for user: " + email
                 ));
+    }
+
+    @Override
+    public void clearCart(ShoppingCart cart) {
+        cart.getCartItems().clear();
     }
 }
