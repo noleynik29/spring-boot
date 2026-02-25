@@ -1,5 +1,6 @@
 package com.example.springboot.mapper;
 
+import com.example.springboot.config.MapperConfig;
 import com.example.springboot.dto.order.CreateOrderRequestDto;
 import com.example.springboot.dto.order.OrderDto;
 import com.example.springboot.dto.order.OrderItemDto;
@@ -7,7 +8,6 @@ import com.example.springboot.entity.Order;
 import com.example.springboot.entity.OrderItem;
 import com.example.springboot.entity.ShoppingCart;
 import org.mapstruct.Mapper;
-import org.mapstruct.MapperConfig;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
