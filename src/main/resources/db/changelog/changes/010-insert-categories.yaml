@@ -12,7 +12,6 @@ databaseChangeLog:
               - column:
                   name: description
                   value: Fiction books
-
         - insert:
             tableName: categories
             columns:
@@ -22,7 +21,6 @@ databaseChangeLog:
               - column:
                   name: description
                   value: Science books
-
         - insert:
             tableName: categories
             columns:

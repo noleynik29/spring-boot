@@ -3,6 +3,7 @@ package com.example.springboot.controller;
 import com.example.springboot.dto.order.CreateOrderRequestDto;
 import com.example.springboot.dto.order.OrderDto;
 import com.example.springboot.dto.order.OrderItemDto;
+import com.example.springboot.dto.order.UpdateOrderStatusRequestDto;
 import com.example.springboot.entity.Order;
 import com.example.springboot.service.order.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,9 +58,9 @@ public class OrderController {
     @PatchMapping("/{orderId}")
     public OrderDto updateStatus(
             @PathVariable Long orderId,
-            @RequestParam Order.Status status) {
+            @RequestBody @Valid UpdateOrderStatusRequestDto requestDto) {
 
-        return orderService.updateStatus(orderId, status);
+        return orderService.updateStatus(orderId, requestDto.status());
     }
 
     @Operation(

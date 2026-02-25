@@ -8,6 +8,7 @@ import com.example.springboot.entity.Order;
 import com.example.springboot.entity.OrderItem;
 import com.example.springboot.entity.ShoppingCart;
 import com.example.springboot.exception.EntityNotFoundException;
+import com.example.springboot.exception.OrderProcessingException;
 import com.example.springboot.mapper.OrderMapper;
 import com.example.springboot.mapper.ShoppingCartMapper;
 import com.example.springboot.repository.order.OrderItemRepository;
@@ -59,25 +60,6 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toDto(order);
     }
 
-    private BigDecimal calculateTotal(Set<OrderItem> orderItems) {
-        return orderItems.stream()
-                .map(item -> item.getPrice()
-                        .multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private void validateCart(ShoppingCart cart) {
-        if (cart.getCartItems().isEmpty()) {
-            throw new IllegalStateException("Shopping cart is empty");
-        }
-    }
-
-    private Order createOrder(ShoppingCart cart, CreateOrderRequestDto dto) {
-        Order order = orderMapper.toEntity(cart, dto);
-        order.setTotal(calculateTotal(order.getOrderItems()));
-        return order;
-    }
-
     @Override
     public Page<OrderItemDto> getOrderItems(Long orderId, Pageable pageable) {
         Page<OrderItem> items = orderItemRepository
@@ -103,5 +85,24 @@ public class OrderServiceImpl implements OrderService {
                         )
                 );
         return orderMapper.toDto(item);
+    }
+
+    private BigDecimal calculateTotal(Set<OrderItem> orderItems) {
+        return orderItems.stream()
+                .map(item -> item.getPrice()
+                        .multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private void validateCart(ShoppingCart cart) {
+        if (cart.getCartItems().isEmpty()) {
+            throw new OrderProcessingException("Shopping cart " + cart.getId() + " is empty");
+        }
+    }
+
+    private Order createOrder(ShoppingCart cart, CreateOrderRequestDto dto) {
+        Order order = orderMapper.toEntity(cart, dto);
+        order.setTotal(calculateTotal(order.getOrderItems()));
+        return order;
     }
 }
