@@ -7,11 +7,12 @@ import com.example.springboot.entity.Order;
 import com.example.springboot.entity.OrderItem;
 import com.example.springboot.entity.ShoppingCart;
 import org.mapstruct.Mapper;
+import org.mapstruct.MapperConfig;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(config = Mapper.class)
+@Mapper(config = MapperConfig.class)
 public interface OrderMapper {
 
     OrderDto toDto(Order order);
