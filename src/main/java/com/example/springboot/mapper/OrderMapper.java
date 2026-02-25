@@ -19,7 +19,7 @@ public interface OrderMapper {
 
     OrderItemDto toDto(OrderItem item);
 
-    default Order toModel(ShoppingCart cart, CreateOrderRequestDto dto) {
+    default Order toEntity(ShoppingCart cart, CreateOrderRequestDto dto) {
         Order order = new Order();
         order.setUser(cart.getUser());
         order.setStatus(Order.Status.PENDING);

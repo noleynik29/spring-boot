@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private Order createOrder(ShoppingCart cart, CreateOrderRequestDto dto) {
-        Order order = orderMapper.toModel(cart, dto);
+        Order order = orderMapper.toEntity(cart, dto);
         order.setTotal(calculateTotal(order.getOrderItems()));
         return order;
     }
