@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Transactional
 public class OrderServiceImpl implements OrderService {
-
     private final ShoppingCartService shoppingCartService;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
