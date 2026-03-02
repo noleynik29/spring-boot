@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql
+    restart: always
+    env_file: ./.env
+    environment:
+      - MYSQL_USER=$MYSQLDB_USER
+      - MYSQL_PASSWORD=$MYSQLDB_PASSWORD
+      - MYSQL_DB=$MYSQLDB_DATABASE
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
