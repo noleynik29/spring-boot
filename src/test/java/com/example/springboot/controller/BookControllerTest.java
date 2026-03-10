@@ -2,6 +2,7 @@ package com.example.springboot.controller;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -14,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.springboot.dto.book.BookDto;
 import com.example.springboot.dto.book.BookSearchParametersDto;
+import com.example.springboot.dto.book.CreateBookRequestDto;
 import com.example.springboot.entity.Book;
 import com.example.springboot.entity.Category;
 import com.example.springboot.repository.book.BookRepository;
@@ -98,30 +100,34 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("Create book")
     @WithMockUser(roles = "ADMIN")
+    @DisplayName("Create book - returns created book")
     void createBook_ReturnsBook() throws Exception {
-        Category category = new Category();
-        category.setName("Category");
-        category.setDescription("Desc");
-        categoryRepository.save(category);
+        String requestJson = "{ " +
+                "\"title\": \"Test Book\", " +
+                "\"author\": \"Test Author\", " +
+                "\"isbn\": \"1234567890\", " +
+                "\"price\": 19.99, " +
+                "\"categoriesId\": []" +
+                " }";
 
-        String json = """
-                {
-                  "title": "New Book",
-                  "author": "Author",
-                  "isbn": "999999999",
-                  "price": 15,
-                  "categoryIds": [%d]
-                }
-                """.formatted(category.getId());
+        BookDto responseDto = new BookDto();
+        responseDto.setId(1L);
+        responseDto.setTitle("Test Book");
+        responseDto.setAuthor("Test Author");
+        responseDto.setPrice(new BigDecimal("19.99"));
+
+        when(bookService.save(any(CreateBookRequestDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(post("/books")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .content(requestJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("New Book"));
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Test Book"))
+                .andExpect(jsonPath("$.author").value("Test Author"))
+                .andExpect(jsonPath("$.price").value(19.99));
     }
 
     @Test
