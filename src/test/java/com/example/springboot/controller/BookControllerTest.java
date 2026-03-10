@@ -155,27 +155,32 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("Update book")
     @WithMockUser(roles = "ADMIN")
+    @DisplayName("Update book - returns updated book")
     void updateBook_ReturnsUpdatedBook() throws Exception {
-        Book book = createTestBook();
+        CreateBookRequestDto requestDto = new CreateBookRequestDto();
+        requestDto.setTitle("Updated Title");
+        requestDto.setAuthor("Updated Author");
+        requestDto.setIsbn("9876543210");
+        requestDto.setPrice(new BigDecimal("29.99"));
 
-        String json = """
-                {
-                  "title": "Updated Title",
-                  "author": "Updated Author",
-                  "isbn": "1234567890",
-                  "price": 20,
-                  "categoryIds": []
-                }
-                """;
+        BookDto updatedBook = new BookDto();
+        updatedBook.setId(1L);
+        updatedBook.setTitle("Updated Title");
+        updatedBook.setAuthor("Updated Author");
+        updatedBook.setPrice(new BigDecimal("29.99"));
 
-        mockMvc.perform(put("/books/{id}", book.getId())
+        when(bookService.update(eq(1L), any(CreateBookRequestDto.class))).thenReturn(updatedBook);
+
+        mockMvc.perform(put("/books/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .content("{\"title\":\"Updated Title\",\"author\":\"Updated Author\",\"isbn\":\"9876543210\",\"price\":29.99}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Updated Title"));
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Updated Title"))
+                .andExpect(jsonPath("$.author").value("Updated Author"))
+                .andExpect(jsonPath("$.price").value(29.99));
     }
 
     @Test
