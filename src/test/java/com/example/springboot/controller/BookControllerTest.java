@@ -32,6 +32,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -77,14 +80,26 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("Get all books")
     @WithMockUser(roles = "USER")
+    @DisplayName("Get all books - returns page of books")
     void getAllBooks_ReturnsPage() throws Exception {
-        createTestBook();
+        BookDto bookDto = new BookDto();
+        bookDto.setId(1L);
+        bookDto.setTitle("Test Book");
+        bookDto.setAuthor("Test Author");
+        bookDto.setPrice(new BigDecimal("19.99"));
+
+        Page<BookDto> page = new PageImpl<>(List.of(bookDto));
+
+        when(bookService.findAll(any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/books"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(1)));
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].title").value("Test Book"))
+                .andExpect(jsonPath("$.content[0].author").value("Test Author"))
+                .andExpect(jsonPath("$.content[0].price").value(19.99));
     }
 
     @Test
