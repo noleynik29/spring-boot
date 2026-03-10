@@ -1,9 +1,10 @@
 package com.example.springboot.controller;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -103,15 +104,23 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("Get book by id")
     @WithMockUser(roles = "USER")
+    @DisplayName("Get book by id - returns book")
     void getBookById_ReturnsBook() throws Exception {
-        Book book = createTestBook();
+        BookDto bookDto = new BookDto();
+        bookDto.setId(1L);
+        bookDto.setTitle("Test Book");
+        bookDto.setAuthor("Test Author");
+        bookDto.setPrice(new BigDecimal("19.99"));
 
-        mockMvc.perform(get("/books/{id}", book.getId()))
+        when(bookService.findById(1L)).thenReturn(bookDto);
+
+        mockMvc.perform(get("/books/{id}", 1L))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value(book.getTitle()))
-                .andExpect(jsonPath("$.author").value(book.getAuthor()));
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Test Book"))
+                .andExpect(jsonPath("$.author").value("Test Author"))
+                .andExpect(jsonPath("$.price").value(19.99));
     }
 
     @Test
@@ -170,16 +179,15 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("Delete book")
     @WithMockUser(roles = "ADMIN")
+    @DisplayName("Delete book - returns no content")
     void deleteBook_ReturnsNoContent() throws Exception {
-        Book book = createTestBook();
+        doNothing().when(bookService).delete(1L);
 
-        mockMvc.perform(delete("/books/{id}", book.getId())
-                        .with(csrf()))
+        mockMvc.perform(delete("/books/{id}", 1L).with(csrf()))
                 .andExpect(status().isNoContent());
 
-        assertFalse(bookRepository.findById(book.getId()).isPresent());
+        verify(bookService, times(1)).delete(1L);
     }
 
     @Test
