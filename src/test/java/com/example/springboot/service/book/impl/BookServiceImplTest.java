@@ -198,7 +198,7 @@ class BookServiceImplTest {
         when(categoryService.getCategoriesByIds(requestDto.getCategoriesId()))
                 .thenReturn(Set.of(category));
 
-        when(bookRepository.save(existingBook)).thenReturn(updatedBook);
+        when(bookRepository.save(any(Book.class))).thenReturn(updatedBook);
         when(bookMapper.toDto(updatedBook)).thenReturn(expectedDto);
 
         BookDto result = bookService.update(id, requestDto);
