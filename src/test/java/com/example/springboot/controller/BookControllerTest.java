@@ -53,7 +53,7 @@ class BookControllerTest {
     @Autowired
     private BookRepository bookRepository;
 
-    @Autowired
+    @MockBean
     private BookService bookService;
 
     @Autowired
