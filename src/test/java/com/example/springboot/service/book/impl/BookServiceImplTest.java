@@ -18,6 +18,7 @@ import com.example.springboot.mapper.BookMapper;
 import com.example.springboot.repository.book.BookRepository;
 import com.example.springboot.repository.book.BookSpecificationBuilder;
 import com.example.springboot.service.category.CategoryService;
+import com.example.springboot.util.TestDataHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -159,5 +160,54 @@ class BookServiceImplTest {
 
         assertEquals(1, result.size());
         verify(bookRepository).findAll(specification);
+    }
+
+    @Test
+    @DisplayName("Update book: should update and return BookDto when id exists")
+    void update_ValidRequest_ReturnUpdatedBookDto() {
+        Long id = 1L;
+
+        CreateBookRequestDto requestDto = TestDataHelper.createUpdatedBookRequestDto();
+
+        Category category = TestDataHelper.createCategory("Fantasy", "Fantasy books");
+
+        Book existingBook = TestDataHelper.createBook(
+                "Old Title",
+                "Old Author",
+                "1111111111",
+                requestDto.getPrice(),
+                category
+        );
+
+        Book updatedBook = TestDataHelper.createBook(
+                requestDto.getTitle(),
+                requestDto.getAuthor(),
+                requestDto.getIsbn(),
+                requestDto.getPrice(),
+                category
+        );
+
+        BookDto expectedDto = TestDataHelper.createSpecificBookDto(
+                id,
+                requestDto.getTitle(),
+                requestDto.getAuthor(),
+                requestDto.getPrice()
+        );
+
+        when(bookRepository.findById(id)).thenReturn(Optional.of(existingBook));
+        when(categoryService.getCategoriesByIds(requestDto.getCategoriesId()))
+                .thenReturn(Set.of(category));
+
+        when(bookRepository.save(existingBook)).thenReturn(updatedBook);
+        when(bookMapper.toDto(updatedBook)).thenReturn(expectedDto);
+
+        BookDto result = bookService.update(id, requestDto);
+
+        assertNotNull(result);
+        assertEquals(expectedDto, result);
+
+        verify(bookRepository).findById(id);
+        verify(bookRepository).save(existingBook);
+        verify(bookMapper).toDto(updatedBook);
     }
 }

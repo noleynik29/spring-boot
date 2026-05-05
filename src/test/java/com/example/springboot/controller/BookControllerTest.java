@@ -24,6 +24,7 @@ import com.example.springboot.repository.category.CategoryRepository;
 import com.example.springboot.security.CustomUserDetailsService;
 import com.example.springboot.service.book.BookService;
 import com.example.springboot.util.JwtUtil;
+import com.example.springboot.util.TestDataHelper;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,14 +32,14 @@ import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
@@ -52,43 +53,25 @@ class BookControllerTest {
     @Autowired
     private BookRepository bookRepository;
 
-    @MockitoBean
+    @Autowired
     private BookService bookService;
 
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @MockitoBean
+    @MockBean
     private JwtUtil jwtUtil;
 
-    @MockitoBean
+    @MockBean
     private CustomUserDetailsService customUserDetailsService;
-
-    private Book createTestBook() {
-        Category category = new Category();
-        category.setName("Test Category");
-        category.setDescription("Test Description");
-        categoryRepository.save(category);
-
-        Book book = new Book();
-        book.setTitle("Test Book");
-        book.setAuthor("Test Author");
-        book.setIsbn("1234567890");
-        book.setPrice(BigDecimal.valueOf(10));
-        book.setCategories(Set.of(category));
-
-        return bookRepository.save(book);
-    }
 
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Get all books - returns page of books")
     void getAllBooks_ReturnsPage() throws Exception {
-        BookDto bookDto = new BookDto();
-        bookDto.setId(1L);
-        bookDto.setTitle("Test Book");
-        bookDto.setAuthor("Test Author");
-        bookDto.setPrice(new BigDecimal("19.99"));
+        Long bookId = 1L;
+        BookDto bookDto = TestDataHelper.createSpecificBookDto(bookId, "Test Book",
+                "Test Author", BigDecimal.valueOf(19.99));
 
         Page<BookDto> page = new PageImpl<>(List.of(bookDto));
 
@@ -107,11 +90,9 @@ class BookControllerTest {
     @WithMockUser(roles = "USER")
     @DisplayName("Get book by id - returns book")
     void getBookById_ReturnsBook() throws Exception {
-        BookDto bookDto = new BookDto();
-        bookDto.setId(1L);
-        bookDto.setTitle("Test Book");
-        bookDto.setAuthor("Test Author");
-        bookDto.setPrice(new BigDecimal("19.99"));
+        Long bookId = 1L;
+        BookDto bookDto = TestDataHelper.createSpecificBookDto(bookId, "Test Book",
+                "Test Author", BigDecimal.valueOf(19.99));
 
         when(bookService.findById(1L)).thenReturn(bookDto);
 
@@ -135,11 +116,10 @@ class BookControllerTest {
                 "\"categoriesId\": []" +
                 " }";
 
-        BookDto responseDto = new BookDto();
-        responseDto.setId(1L);
-        responseDto.setTitle("Test Book");
-        responseDto.setAuthor("Test Author");
-        responseDto.setPrice(new BigDecimal("19.99"));
+        Long bookId = 1L;
+        BookDto responseDto = TestDataHelper.createSpecificBookDto(bookId, "Test Book",
+                "Test Author", BigDecimal.valueOf(19.99));
+
 
         when(bookService.save(any(CreateBookRequestDto.class))).thenReturn(responseDto);
 
@@ -158,24 +138,19 @@ class BookControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Update book - returns updated book")
     void updateBook_ReturnsUpdatedBook() throws Exception {
-        CreateBookRequestDto requestDto = new CreateBookRequestDto();
-        requestDto.setTitle("Updated Title");
-        requestDto.setAuthor("Updated Author");
-        requestDto.setIsbn("9876543210");
-        requestDto.setPrice(new BigDecimal("29.99"));
+        CreateBookRequestDto requestDto = TestDataHelper.createUpdatedBookRequestDto();
 
-        BookDto updatedBook = new BookDto();
-        updatedBook.setId(1L);
-        updatedBook.setTitle("Updated Title");
-        updatedBook.setAuthor("Updated Author");
-        updatedBook.setPrice(new BigDecimal("29.99"));
+        Long bookId = 1L;
+        BookDto updatedBook = TestDataHelper.createSpecificBookDto(bookId, "Updated Title",
+                "Updated Author", BigDecimal.valueOf(29.99));
 
         when(bookService.update(eq(1L), any(CreateBookRequestDto.class))).thenReturn(updatedBook);
 
         mockMvc.perform(put("/books/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"Updated Title\",\"author\":\"Updated Author\",\"isbn\":\"9876543210\",\"price\":29.99}"))
+                        .content("{\"title\":\"Updated Title\",\"author\":\"Updated Author\","
+                                + "\"isbn\":\"9876543210\",\"price\":29.99}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.title").value("Updated Title"))
@@ -199,11 +174,9 @@ class BookControllerTest {
     @WithMockUser(roles = "USER")
     @DisplayName("Search books returns list of books")
     void searchBooks_ReturnsBooks() throws Exception {
-        BookDto bookDto = new BookDto();
-        bookDto.setId(1L);
-        bookDto.setTitle("Test Title");
-        bookDto.setAuthor("Author");
-        bookDto.setPrice(BigDecimal.TEN);
+        Long bookId = 1L;
+        BookDto bookDto = TestDataHelper.createSpecificBookDto(bookId, "Test Book",
+                "Test Author", BigDecimal.valueOf(19.99));
 
         BookSearchParametersDto searchParams =
                 new BookSearchParametersDto(
@@ -216,5 +189,75 @@ class BookControllerTest {
 
         mockMvc.perform(get("/books/search"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("Get book by id - not found")
+    void getBookById_NotFound() throws Exception {
+        when(bookService.findById(999L))
+                .thenThrow(new RuntimeException("Book not found"));
+
+        mockMvc.perform(get("/books/{id}", 999L))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Create book - invalid input returns 400")
+    void createBook_InvalidInput() throws Exception {
+        String invalidJson = "{ \"title\": \"\" }";
+
+        mockMvc.perform(post("/books")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Create book - service throws exception")
+    void createBook_ServiceException() throws Exception {
+        String requestJson = "{ " +
+                "\"title\": \"Test Book\", " +
+                "\"author\": \"Test Author\", " +
+                "\"isbn\": \"1234567890\", " +
+                "\"price\": 19.99, " +
+                "\"categoriesId\": []" +
+                " }";
+
+        when(bookService.save(any(CreateBookRequestDto.class)))
+                .thenThrow(new RuntimeException("Error saving book"));
+
+        mockMvc.perform(post("/books")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Update book - not found")
+    void updateBook_NotFound() throws Exception {
+        when(bookService.update(eq(999L), any(CreateBookRequestDto.class)))
+                .thenThrow(new RuntimeException("Book not found"));
+
+        mockMvc.perform(put("/books/{id}", 999L)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Updated\"}"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Delete book - not found")
+    void deleteBook_NotFound() throws Exception {
+        doNothing().when(bookService).delete(999L);
+
+        mockMvc.perform(delete("/books/{id}", 999L).with(csrf()))
+                .andExpect(status().isNotFound());
     }
 }
