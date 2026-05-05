@@ -179,14 +179,6 @@ class BookServiceImplTest {
                 category
         );
 
-        Book savedBook = TestDataHelper.createBook(
-                requestDto.getTitle(),
-                requestDto.getAuthor(),
-                requestDto.getIsbn(),
-                requestDto.getPrice(),
-                category
-        );
-
         BookDto expectedDto = TestDataHelper.createSpecificBookDto(
                 id,
                 requestDto.getTitle(),
@@ -194,13 +186,11 @@ class BookServiceImplTest {
                 requestDto.getPrice()
         );
 
-        when(bookRepository.findById(id)).thenReturn(Optional.of(existingBook));
+        when(bookRepository.findById(id))
+                .thenReturn(Optional.of(existingBook));
 
         when(categoryService.getCategoriesByIds(requestDto.getCategoriesId()))
                 .thenReturn(Set.of(category));
-
-        when(bookRepository.save(any(Book.class)))
-                .thenReturn(savedBook);
 
         when(bookMapper.toDto(any(Book.class)))
                 .thenReturn(expectedDto);
@@ -211,7 +201,8 @@ class BookServiceImplTest {
         assertEquals(expectedDto, result);
 
         verify(bookRepository).findById(id);
-        verify(bookRepository).save(existingBook);
-        verify(bookMapper).toDto(any(Book.class));
+        verify(bookMapper).updateBookFromDto(requestDto, existingBook);
+        verify(categoryService).getCategoriesByIds(requestDto.getCategoriesId());
+        verify(bookMapper).toDto(existingBook);
     }
 }
