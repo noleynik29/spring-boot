@@ -2,10 +2,7 @@ package com.example.springboot.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -19,6 +16,7 @@ import com.example.springboot.dto.book.BookSearchParametersDto;
 import com.example.springboot.dto.book.CreateBookRequestDto;
 import com.example.springboot.entity.Book;
 import com.example.springboot.entity.Category;
+import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.repository.book.BookRepository;
 import com.example.springboot.repository.category.CategoryRepository;
 import com.example.springboot.security.CustomUserDetailsService;
@@ -113,7 +111,7 @@ class BookControllerTest {
                 "\"author\": \"Test Author\", " +
                 "\"isbn\": \"1234567890\", " +
                 "\"price\": 19.99, " +
-                "\"categoriesId\": []" +
+                "\"categoriesId\": [1]" +
                 " }";
 
         Long bookId = 1L;
@@ -196,7 +194,7 @@ class BookControllerTest {
     @DisplayName("Get book by id - not found")
     void getBookById_NotFound() throws Exception {
         when(bookService.findById(999L))
-                .thenThrow(new RuntimeException("Book not found"));
+                .thenThrow(new EntityNotFoundException("Book not found"));
 
         mockMvc.perform(get("/books/{id}", 999L))
                 .andExpect(status().isNotFound());
@@ -224,7 +222,7 @@ class BookControllerTest {
                 "\"author\": \"Test Author\", " +
                 "\"isbn\": \"1234567890\", " +
                 "\"price\": 19.99, " +
-                "\"categoriesId\": []" +
+                "\"categoriesId\": [1]" +
                 " }";
 
         when(bookService.save(any(CreateBookRequestDto.class)))
@@ -242,7 +240,7 @@ class BookControllerTest {
     @DisplayName("Update book - not found")
     void updateBook_NotFound() throws Exception {
         when(bookService.update(eq(999L), any(CreateBookRequestDto.class)))
-                .thenThrow(new RuntimeException("Book not found"));
+                .thenThrow(new EntityNotFoundException("Book not found"));
 
         mockMvc.perform(put("/books/{id}", 999L)
                         .with(csrf())
@@ -255,7 +253,8 @@ class BookControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Delete book - not found")
     void deleteBook_NotFound() throws Exception {
-        doNothing().when(bookService).delete(999L);
+        doThrow(new EntityNotFoundException("Not found"))
+                .when(bookService).delete(999L);
 
         mockMvc.perform(delete("/books/{id}", 999L).with(csrf()))
                 .andExpect(status().isNotFound());
