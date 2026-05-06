@@ -54,10 +54,10 @@ class BookServiceImplTest {
     @Test
     @DisplayName("Save book: should return BookDto when request is valid")
     void save_ValidRequest_ReturnBookDto() {
-        CreateBookRequestDto requestDto = new CreateBookRequestDto();
-        Book book = new Book();
-        Book savedBook = new Book();
-        BookDto expectedDto = new BookDto();
+        CreateBookRequestDto requestDto = TestDataHelper.createBookRequestDto();
+        Book book = TestDataHelper.createBook();
+        Book savedBook = TestDataHelper.createBook();
+        BookDto expectedDto = TestDataHelper.createBookDto();
 
         when(bookMapper.toEntity(requestDto)).thenReturn(book);
         when(categoryService.getCategoriesByIds(any())).thenReturn(Set.of(new Category()));
@@ -171,7 +171,7 @@ class BookServiceImplTest {
 
         Category category = TestDataHelper.createCategory("Fantasy", "Fantasy books");
 
-        Book existingBook = TestDataHelper.createBook(
+        Book existingBook = TestDataHelper.createSpecificBook(
                 "Old Title",
                 "Old Author",
                 "1111111111",

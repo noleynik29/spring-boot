@@ -51,16 +51,16 @@ class BookControllerTest {
     @Autowired
     private BookRepository bookRepository;
 
-    @MockBean
+    @Autowired
     private BookService bookService;
 
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @MockBean
+    @Autowired
     private JwtUtil jwtUtil;
 
-    @MockBean
+    @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
     @Test

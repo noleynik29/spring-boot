@@ -88,7 +88,17 @@ public class TestDataHelper {
         return category;
     }
 
-    public static Book createBook(String title, String author, String isbn, BigDecimal price, Category category) {
+    public static Book createBook() {
+        Book book = new Book();
+        book.setTitle("The Lord of the Rings");
+        book.setAuthor("J.R.R. Tolkien");
+        book.setIsbn("123456789");
+        book.setPrice(BigDecimal.valueOf(100));
+        book.setCategories(Set.of(createCategory("Fantasy", "Fantasy books")));
+        return book;
+    }
+
+    public static Book createSpecificBook(String title, String author, String isbn, BigDecimal price, Category category) {
         Book book = new Book();
         book.setTitle(title);
         book.setAuthor(author);
