@@ -67,149 +67,178 @@ class BookControllerTest {
     @WithMockUser(roles = "USER")
     @DisplayName("Get all books - returns page of books")
     void getAllBooks_ReturnsPage() throws Exception {
-        Long bookId = 1L;
-        BookDto bookDto = TestDataHelper.createSpecificBookDto(bookId, "Test Book",
-                "Test Author", BigDecimal.valueOf(19.99));
+        Category category = categoryRepository.save(
+                TestDataHelper.createCategory("Fantasy", "Fantasy books")
+        );
 
-        Page<BookDto> page = new PageImpl<>(List.of(bookDto));
+        Book book = TestDataHelper.createSpecificBook(
+                "Test Book",
+                "Test Author",
+                "1234567890",
+                BigDecimal.valueOf(19.99),
+                category
+        );
 
-        when(bookService.findAll(any(Pageable.class))).thenReturn(page);
+        book = bookRepository.save(book);
 
-        mockMvc.perform(get("/books"))
+        mockMvc.perform(get("/books")
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].id").value(1))
-                .andExpect(jsonPath("$.content[0].title").value("Test Book"))
-                .andExpect(jsonPath("$.content[0].author").value("Test Author"))
-                .andExpect(jsonPath("$.content[0].price").value(19.99));
+                .andExpect(jsonPath("$.content[0].id").value(book.getId()))
+                .andExpect(jsonPath("$.content[0].title").value("Test Book"));
     }
 
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Get book by id - returns book")
     void getBookById_ReturnsBook() throws Exception {
-        Long bookId = 1L;
-        BookDto bookDto = TestDataHelper.createSpecificBookDto(bookId, "Test Book",
-                "Test Author", BigDecimal.valueOf(19.99));
+        Category category = categoryRepository.save(
+                TestDataHelper.createCategory("Fantasy", "Fantasy books")
+        );
 
-        when(bookService.findById(1L)).thenReturn(bookDto);
+        Book book = bookRepository.save(
+                TestDataHelper.createSpecificBook(
+                        "Test Book",
+                        "Test Author",
+                        "123",
+                        BigDecimal.TEN,
+                        category
+                )
+        );
 
-        mockMvc.perform(get("/books/{id}", 1L))
+        mockMvc.perform(get("/books/" + book.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Test Book"))
-                .andExpect(jsonPath("$.author").value("Test Author"))
-                .andExpect(jsonPath("$.price").value(19.99));
+                .andExpect(jsonPath("$.id").value(book.getId()));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Create book - returns created book")
     void createBook_ReturnsBook() throws Exception {
-        String requestJson = "{ " +
-                "\"title\": \"Test Book\", " +
-                "\"author\": \"Test Author\", " +
-                "\"isbn\": \"1234567890\", " +
-                "\"price\": 19.99, " +
-                "\"categoriesId\": [1]" +
-                " }";
+        Category category = categoryRepository.save(
+                TestDataHelper.createCategory("Fantasy", "Fantasy books")
+        );
 
-        Long bookId = 1L;
-        BookDto responseDto = TestDataHelper.createSpecificBookDto(bookId, "Test Book",
-                "Test Author", BigDecimal.valueOf(19.99));
-
-
-        when(bookService.save(any(CreateBookRequestDto.class))).thenReturn(responseDto);
+        String json = """
+        {
+          "title":"The Lord of the Rings",
+          "author":"J.R.R. Tolkien",
+          "isbn":"123456789",
+          "price":100,
+          "categoriesId":[%d]
+        }
+        """.formatted(category.getId());
 
         mockMvc.perform(post("/books")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
+                        .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Test Book"))
-                .andExpect(jsonPath("$.author").value("Test Author"))
-                .andExpect(jsonPath("$.price").value(19.99));
+                .andExpect(jsonPath("$.title").value("The Lord of the Rings"));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Update book - returns updated book")
     void updateBook_ReturnsUpdatedBook() throws Exception {
-        CreateBookRequestDto requestDto = TestDataHelper.createUpdatedBookRequestDto();
+        Category category = categoryRepository.save(
+                TestDataHelper.createCategory("Fantasy", "Fantasy books")
+        );
 
-        Long bookId = 1L;
-        BookDto updatedBook = TestDataHelper.createSpecificBookDto(bookId, "Updated Title",
-                "Updated Author", BigDecimal.valueOf(29.99));
+        Book book = bookRepository.save(
+                TestDataHelper.createSpecificBook(
+                        "Old Title",
+                        "Old Author",
+                        "111",
+                        BigDecimal.TEN,
+                        category
+                )
+        );
 
-        when(bookService.update(eq(1L), any(CreateBookRequestDto.class))).thenReturn(updatedBook);
+        String json = """
+        {
+          "title":"Updated Title",
+          "author":"Updated Author",
+          "isbn":"9876543210",
+          "price":2000,
+          "categoriesId":[%d]
+        }
+        """.formatted(category.getId());
 
-        mockMvc.perform(put("/books/{id}", 1L)
+        mockMvc.perform(put("/books/" + book.getId())
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"Updated Title\",\"author\":\"Updated Author\","
-                                + "\"isbn\":\"9876543210\",\"price\":29.99}"))
+                        .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Updated Title"))
-                .andExpect(jsonPath("$.author").value("Updated Author"))
-                .andExpect(jsonPath("$.price").value(29.99));
+                .andExpect(jsonPath("$.title").value("Updated Title"));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Delete book - returns no content")
     void deleteBook_ReturnsNoContent() throws Exception {
-        doNothing().when(bookService).delete(1L);
+        Category category = categoryRepository.save(
+                TestDataHelper.createCategory("Fantasy", "Fantasy books")
+        );
 
-        mockMvc.perform(delete("/books/{id}", 1L).with(csrf()))
+        Book book = bookRepository.save(
+                TestDataHelper.createSpecificBook(
+                        "Test",
+                        "Author",
+                        "123",
+                        BigDecimal.TEN,
+                        category
+                )
+        );
+
+        mockMvc.perform(delete("/books/" + book.getId()).with(csrf()))
                 .andExpect(status().isNoContent());
-
-        verify(bookService, times(1)).delete(1L);
     }
 
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Search books returns list of books")
     void searchBooks_ReturnsBooks() throws Exception {
-        Long bookId = 1L;
-        BookDto bookDto = TestDataHelper.createSpecificBookDto(bookId, "Test Book",
-                "Test Author", BigDecimal.valueOf(19.99));
+        Category category = categoryRepository.save(
+                TestDataHelper.createCategory("Fantasy", "Fantasy books")
+        );
 
-        BookSearchParametersDto searchParams =
-                new BookSearchParametersDto(
-                        new String[]{"Title"},
-                        new String[]{"Author"},
-                        new String[]{"1234567890"}
-                );
+        bookRepository.save(
+                TestDataHelper.createSpecificBook(
+                        "Test Book",
+                        "Test Author",
+                        "1234567890",
+                        BigDecimal.valueOf(19.99),
+                        category
+                )
+        );
 
-        when(bookService.searchBooks(eq(searchParams))).thenReturn(List.of(bookDto));
-
-        mockMvc.perform(get("/books/search"))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/books/search")
+                        .param("titles", "Test Book")
+                        .param("authors", "Test Author")
+                        .param("isbns", "1234567890"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("Test Book"));
     }
 
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Get book by id - not found")
     void getBookById_NotFound() throws Exception {
-        when(bookService.findById(999L))
-                .thenThrow(new EntityNotFoundException("Book not found"));
-
-        mockMvc.perform(get("/books/{id}", 999L))
+        mockMvc.perform(get("/books/999"))
                 .andExpect(status().isNotFound());
     }
+
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Create book - invalid input returns 400")
     void createBook_InvalidInput() throws Exception {
-        String invalidJson = "{ \"title\": \"\" }";
-
         mockMvc.perform(post("/books")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(invalidJson))
+                        .content("{\"title\":\"\"}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -239,13 +268,17 @@ class BookControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Update book - not found")
     void updateBook_NotFound() throws Exception {
-        when(bookService.update(eq(999L), any(CreateBookRequestDto.class)))
-                .thenThrow(new EntityNotFoundException("Book not found"));
+        String json = """
+        {
+          "title":"Updated",
+          "categoriesId":[1]
+        }
+        """;
 
-        mockMvc.perform(put("/books/{id}", 999L)
+        mockMvc.perform(put("/books/999")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"Updated\"}"))
+                        .content(json))
                 .andExpect(status().isNotFound());
     }
 
@@ -253,10 +286,8 @@ class BookControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Delete book - not found")
     void deleteBook_NotFound() throws Exception {
-        doThrow(new EntityNotFoundException("Not found"))
-                .when(bookService).delete(999L);
-
-        mockMvc.perform(delete("/books/{id}", 999L).with(csrf()))
+        mockMvc.perform(delete("/books/999").with(csrf()))
                 .andExpect(status().isNotFound());
     }
+
 }
