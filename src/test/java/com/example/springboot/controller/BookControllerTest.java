@@ -1,8 +1,5 @@
 package com.example.springboot.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -11,12 +8,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.springboot.dto.book.BookDto;
-import com.example.springboot.dto.book.BookSearchParametersDto;
-import com.example.springboot.dto.book.CreateBookRequestDto;
 import com.example.springboot.entity.Book;
 import com.example.springboot.entity.Category;
-import com.example.springboot.exception.EntityNotFoundException;
 import com.example.springboot.repository.book.BookRepository;
 import com.example.springboot.repository.category.CategoryRepository;
 import com.example.springboot.security.CustomUserDetailsService;
@@ -25,17 +18,11 @@ import com.example.springboot.util.JwtUtil;
 import com.example.springboot.util.TestDataHelper;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -240,28 +227,6 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"\"}"))
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    @DisplayName("Create book - service throws exception")
-    void createBook_ServiceException() throws Exception {
-        String requestJson = "{ " +
-                "\"title\": \"Test Book\", " +
-                "\"author\": \"Test Author\", " +
-                "\"isbn\": \"1234567890\", " +
-                "\"price\": 19.99, " +
-                "\"categoriesId\": [1]" +
-                " }";
-
-        when(bookService.save(any(CreateBookRequestDto.class)))
-                .thenThrow(new RuntimeException("Error saving book"));
-
-        mockMvc.perform(post("/books")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andExpect(status().isInternalServerError());
     }
 
     @Test

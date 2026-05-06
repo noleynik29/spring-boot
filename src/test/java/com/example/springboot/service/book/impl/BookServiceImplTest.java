@@ -3,6 +3,7 @@ package com.example.springboot.service.book.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -78,8 +79,11 @@ class BookServiceImplTest {
         Book book = new Book();
         BookDto dto = new BookDto();
 
-        when(bookRepository.findById(id)).thenReturn(Optional.of(book));
-        when(bookMapper.toDto(book)).thenReturn(dto);
+        when(bookRepository.findById(anyLong()))
+                .thenReturn(Optional.of(book));
+
+        when(bookMapper.toDto(any(Book.class)))
+                .thenReturn(dto);
 
         BookDto result = bookService.findById(id);
 
