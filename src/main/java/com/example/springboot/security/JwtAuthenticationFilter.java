@@ -31,11 +31,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
             token = authHeader.substring(BEARER_PREFIX.length());
-            username = jwtUtil.extractUsername(token);
+            username = jwtUtil.getUsername(token);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             var userDetails = userDetailsService.loadUserByUsername(username);
-            if (jwtUtil.validateToken(token)) {
+            if (jwtUtil.isValidToken(token)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities()
