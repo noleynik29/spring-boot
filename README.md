@@ -35,7 +35,7 @@ The main goal of this project was to deepen my understanding of enterprise Java 
 - Maven
 
 ### Database
-- MySQL / PostgreSQL
+- MySQL
 
 ### Documentation & Tools
 - Swagger / OpenAPI
