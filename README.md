@@ -235,23 +235,45 @@ The project contains:
 
 ---
 
-## 📬 Postman Collection
+# 📬 Postman Collection
 
-You can create and import a Postman collection to test all API endpoints easily.
+This project includes a ready-to-use Postman collection for testing all API endpoints.
 
-### Recommended workflow:
-1. Start the application
-2. Import the Postman collection
-3. Test authentication endpoints
-4. Use the received token for secured requests
+## 📥 How to use
 
-### Example endpoints:
-- `POST /auth/login`
-- `POST /auth/register`
-- `GET /api/users`
-- `POST /api/orders`
+1. Download or clone the repository
+2. Open Postman
+3. Click **Import**
+4. Select file:
+   ```
+   /postman/spring-boot-api.postman_collection.json
+   ```
+5. Import it
+6. Run the application locally
+7. Start testing endpoints
 
----
+## 🔐 Authentication
+
+This project uses JWT authentication.
+
+After login, copy the token and set it in Postman Environment:
+
+```text
+token = your_jwt_token_here
+```
+
+Then all secured requests will automatically use:
+
+```text
+Authorization: Bearer {{token}}
+```
+
+## 🚀 Example workflow
+
+1. Register user
+2. Login
+3. Save JWT token
+4. Use Books / Orders endpoints
 
 ## 🧩 Challenges & Lessons Learned
 
