@@ -72,6 +72,12 @@ src
 
 ---
 
+# 🏗️ Project Architecture
+
+![Architecture Diagram](docs/diagram.png)
+
+---
+
 ## 🔐 Security
 
 This project uses **Spring Security** to secure API endpoints and manage authentication/authorization.
