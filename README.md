@@ -156,6 +156,64 @@ java -jar target/spring-boot.jar
 
 ---
 
+# 🐳 Running with Docker
+
+## 1. Build the project
+
+Before building the Docker image, generate the JAR file:
+
+```bash
+mvn clean package
+```
+
+---
+
+## 2. Build Docker image
+
+```bash
+docker build -t spring-boot-app .
+```
+
+---
+
+## 3. Run Docker container
+
+```bash
+docker run -p 8080:8080 spring-boot-app
+```
+
+The application will be available at:
+
+```bash
+http://localhost:8080
+```
+
+---
+
+## 4. Stop container
+
+List running containers:
+
+```bash
+docker ps
+```
+
+Stop container:
+
+```bash
+docker stop <container_id>
+```
+
+---
+
+## 5. Swagger API Documentation
+
+After starting the container, Swagger UI will be available at:
+
+```bash
+http://localhost:8080/swagger-ui/index.html
+```
+
 ## 🧪 Running Tests
 
 Run all tests with:
