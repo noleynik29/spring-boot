@@ -246,7 +246,7 @@ This project includes a ready-to-use Postman collection for testing all API endp
 3. Click **Import**
 4. Select file:
    ```
-   /postman/spring-boot-api.postman_collection.json
+   /postman/postman-collection-import.json
    ```
 5. Import it
 6. Run the application locally
